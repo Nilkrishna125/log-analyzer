@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom CSV Download</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #f5f7fa, #dbeafe);
+      padding: 50px 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 500;
+      color: #555;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 18px;
+      font-size: 15px;
+      border-radius: 30px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+
+    .form-control:focus {
+      border-color: #8800bd;
+      box-shadow: 0 0 8px rgba(136, 0, 189, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(to right, #8800bd, #a764b4);
+      color: white;
+      margin-top: 25px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #a764b4, #8800bd);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .icon {
+      color: #8800bd;
+      margin-right: 8px;
+    }
+
+    .input-group-text {
+      border-radius: 30px 0 0 30px;
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="fadeInContainer">
+    <h2>Filter & Download Log Data</h2>
+    <form method="POST">
+
+      <!-- Serial Number -->
+      <label>Serial Number Range:</label>
+      <div class="input-group">
+        <input type="number" name="serial_start" class="form-control" placeholder="Start (e.g. 1)">
+        <input type="number" name="serial_end" class="form-control" placeholder="End (e.g. 1000)">
+      </div>
+
+      <!-- Timestamp -->
+      <label>Timestamp Interval:</label>
+      <div class="input-group">
+        <input type="text" name="start_time" class="form-control" placeholder="Start (YYYY-MM-DD HH:MM:SS)">
+        <input type="text" name="end_time" class="form-control" placeholder="End (YYYY-MM-DD HH:MM:SS)">
+      </div>
+
+      <!-- Event ID -->
+      <label>Event ID:</label>
+      <input type="text" name="eventid" class="form-control" placeholder="e.g. E3">
+      <br>
+
+      <!-- LEVEL-->
+      <label>Level:</label>
+      <input type="text" name="level" class="form-control" placeholder="e.g. error">
+
+      <button type="submit">Download Filtered CSV</button>
+    </form>
+  </div>
+
+  <script>
+    // Wait until the DOM content is loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      // Get the container element
+      const container = document.getElementById('fadeInContainer');
+
+      // Simulate the "fadeInUp" effect by changing opacity and position with JavaScript
+      container.style.opacity = 1;
+      container.style.transform = 'translateY(0)';
+    });
+  </script>
+
+</body>
+</html>

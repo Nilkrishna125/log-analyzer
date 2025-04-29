@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Processed Log Data</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #f2f6ff, #e1eaff);
+      color: #333;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .navbar button {
+      background: linear-gradient(135deg, #8800bd, #a764b4);
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+
+    .navbar button:hover {
+      transform: translateY(-2px);
+    }
+
+    .search-container {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-box {
+      display: flex;
+      border-radius: 50px;
+      overflow: hidden;
+      border: 2px solid #dcdcdc;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-box input {
+      border: none;
+      padding: 12px 20px;
+      width: 350px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-box button {
+      background: #8800bd;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .search-box button:hover {
+      background: #a764b4;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #202124;
+      text-align: center;
+    }
+
+    .lead {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    thead th {
+      background: linear-gradient(135deg, #8800bd, #a764b4);
+      color: white;
+      font-weight: 600;
+      padding: 10px;
+      text-align: center;
+    }
+
+    tbody td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #f5f7fa;
+    }
+
+    tbody tr:hover {
+      background-color: #e3eaf6;
+    }
+
+    .filter-popup {
+      position: absolute;
+      background: white;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      display: none;
+      width: 220px;
+    }
+
+    .filter-popup input {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .filter-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      background-color: #8800bd;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .filter-btn:hover {
+      background-color: #a764b4;
+    }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <form class="search-box" onsubmit="event.preventDefault(); filterTable();">
+      <input type="text" id="searchInput" placeholder="🔍 Search by template, eventid, date..." />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <div class="navbar">
+    <a href="/visualize/sample.csv"><button type="button">📊 Visualize</button></a>
+    <a href="/filter_download/sample.csv"><button type="button">⬇️ Download CSV</button></a>
+  </div>
+
+  <div class="filter-popup" id="filterPopup">
+    <form id="filterForm">
+      <div id="filterFields"></div>
+      <button type="submit" class="filter-btn">Apply Filter</button>
+    </form>
+  </div>
+
+  <div class="container">
+    <h1>Processed Log Data</h1>
+    <p class="lead">Here is the processed log data in a beautifully structured table.</p>
+
+    <div class="table-responsive">
+      <table id="csvTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function loadCSV() {
+      const response = await fetch('/uploads/sample.csv');
+      const data = await response.text();
+      const rows = data.trim().split('\n').map(row => row.split(','));
+
+      const thead = document.querySelector("#csvTable thead");
+      const tbody = document.querySelector("#csvTable tbody");
+      thead.innerHTML = "";
+      tbody.innerHTML = "";
+
+      const headerRow = document.createElement("tr");
+      rows[0].forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        th.setAttribute('data-column', col.trim().toLowerCase());
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      rows.slice(1).forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      addFilterPopupHandlers(rows[0]);
+    }
+
+    function filterTable() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#csvTable tbody tr");
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? "" : "none";
+      });
+    }
+
+    function addFilterPopupHandlers(columns) {
+      const popup = document.getElementById("filterPopup");
+      const filterFields = document.getElementById("filterFields");
+      const filterForm = document.getElementById("filterForm");
+      const headers = document.querySelectorAll("#csvTable thead th");
+
+      headers.forEach((th, idx) => {
+        th.addEventListener("click", () => {
+          const colName = th.getAttribute("data-column");
+
+          if (colName === "lineid" || colName === "timestamp") {
+            popup.style.display = "block";
+            const rect = th.getBoundingClientRect();
+            popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+            popup.style.left = `${rect.left + window.scrollX}px`;
+
+            filterFields.innerHTML = `
+              <label>${colName} From</label>
+              <input type="${colName === 'timestamp' ? 'datetime-local' : 'number'}" name="from" required>
+              <label>${colName} To</label>
+              <input type="${colName === 'timestamp' ? 'datetime-local' : 'number'}" name="to" required>
+              <input type="hidden" name="colIndex" value="${idx}">
+              <input type="hidden" name="colType" value="${colName}">
+            `;
+          }
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!popup.contains(e.target) && !e.target.closest("th")) {
+          popup.style.display = "none";
+        }
+      });
+
+      filterForm.onsubmit = (e) => {
+        e.preventDefault();
+        const from = filterForm.from.value;
+        const to = filterForm.to.value;
+        const colIndex = parseInt(filterForm.colIndex.value);
+        const colType = filterForm.colType.value;
+
+        const rows = document.querySelectorAll("#csvTable tbody tr");
+        rows.forEach(row => {
+          const cellVal = row.children[colIndex].textContent.trim();
+          let show = true;
+
+          if (colType === "lineid") {
+            const num = parseInt(cellVal);
+            show = num >= parseInt(from) && num <= parseInt(to);
+          } else if (colType === "timestamp") {
+            const d = new Date(cellVal);
+            const start = new Date(from);
+            const end = new Date(to);
+            show = d >= start && d <= end;
+          }
+
+          row.style.display = show ? "" : "none";
+        });
+
+        popup.style.display = "none";
+      };
+    }
+
+    loadCSV();
+  </script>
+</body>
+</html>

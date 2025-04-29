@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Visualizations</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f9f7f7, #dbe2ef);
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #3f72af;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        form input {
+            padding: 10px 15px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        form button {
+            background: linear-gradient(135deg, #3f72af, #112d4e);
+            color: #fff;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #29487d, #0e1c33);
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn {
+            display: block;
+            margin: 10px auto 30px;
+            text-align: center;
+            background-color: #3f72af;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #112d4e;
+        }
+
+        .code-graph-button {
+            display: block;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .code-graph-button button {
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #ffc107;
+            border: none;
+            cursor: pointer;
+        }
+
+        .code-graph-button button:hover {
+            background-color: #e0a800;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-weight: bold;
+            color: #3f72af;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #112d4e;
+        }
+
+        hr {
+            margin: 40px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Log Visualizations</h1>
+
+        <form method="post">
+            <label><strong>From (yyyy-mm-dd HH:MM:SS):</strong></label>
+            <input type="text" name="start" placeholder="e.g. 2025-04-01 00:00:00">
+            <label><strong>To:</strong></label>
+            <input type="text" name="end" placeholder="e.g. 2025-04-10 23:59:59">
+            <button type="submit">Filter</button>
+        </form>
+
+        <div class="code-graph-button">
+            <a href="/code_your_graph/sample.csv">
+                <button type="button">🧠 Code Your Graph</button>
+            </a>
+        </div>
+
+        <hr>
+
+        <h2>📅 Events Over Time</h2>
+        <img id="events_over_time" src="/static/plots/sample_events.png" alt="Events Over Time">
+        <a class="download-btn" download="events_over_time.png" href="/static/plots/sample_events.png">⬇ Download PNG</a>
+
+        <h2>📊 Level State Distribution</h2>
+        <img id="level_distribution" src="/static/plots/sample_level.png" alt="Level Distribution">
+        <a class="download-btn" download="level_distribution.png" href="/static/plots/sample_level.png">⬇ Download PNG</a>
+
+        <h2>🧩 Event Code Distribution</h2>
+        <img id="event_code_distribution" src="/static/plots/sample_event_code.png" alt="Event Code Distribution">
+        <a class="download-btn" download="event_code_distribution.png" href="/static/plots/sample_event_code.png">⬇ Download PNG</a>
+
+        <hr>
+
+        <a class="back-link" href="/display/sample.csv">⬅ Back to Logs</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Code Your Graph - Log Visualizations</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #f9f7f7, #dbe2ef);
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #3f72af;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffd7b6, #ff7300);
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ffd7b6, #ff7300);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-weight: 500;
+            color: #3f72af;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #112d4e;
+        }
+
+        .output-plot {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        hr {
+            margin: 40px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 Code Your Graph</h1>
+
+    <form method="post">
+        <label><strong>Write your custom Python code below:</strong></label>
+        <form method="POST">
+            <label for="python_code"><strong>Write Your Python Code Here:</strong></label><br>
+            <textarea id="python_code" name="python_code" rows="20" cols="80" style="width:100%; font-family: monospace;"></textarea>
+            <br><br>
+            <button type="submit" class="button">Generate Plot</button>
+        </form>
+        
+
+    </form>
+
+        <div class="output-plot">
+            <h3>Your Generated Plot:</h3>
+            <img src="/static/plots/coded_plot.png" alt="Generated Plot">
+            <a class="button" href="/static/plots/coded_plot.png" download="generated_plot.png">⬇ Download PNG</a>
+        </div>
+
+    <hr>
+
+    <a class="back-link" href="/visualize/sample.csv">⬅ Back to Visualizations</a>
+</div>
+<script>
+    document.getElementById("python_code").value = `# You can use the following:
+# - df : pandas DataFrame of your log CSV
+# - plt : matplotlib.pyplot
+# - pd : pandas
+                
+# Example: Plot number of events per second
+df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+counts = df.groupby(df['timestamp'].dt.floor('S')).size()
+                
+plt.figure(figsize=(10,5))
+counts.plot()
+plt.title("Events per Second")
+plt.xlabel("Timestamp")
+plt.ylabel("Event Count")`
+</script>
+</body>
+</html>

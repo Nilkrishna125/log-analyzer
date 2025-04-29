@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Log File Upload</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh; /* use full height of the screen  */
+      background: url('static/images/log_project_3.webp') no-repeat center left fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: flex-start; /* the flex thing is used to align the upload box in the left */
+      align-items: center;
+      font-family: sans-serif;
+    }
+
+    .upload-box {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      padding: 50px 40px;
+      border-radius: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      margin-left: 60px;
+      text-align: center;
+      border: 2px dashed rgba(255, 255, 255, 0.4);
+      opacity: 0.5;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .upload-box.highlight {
+      border-color: #0b79d0;
+      background-color: rgba(240, 248, 255, 0.3);
+    }
+
+    .upload-box.visible {
+      opacity: 0.95;
+      transform: translateY(0);
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      font-weight: bold;
+      color: #000;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+      margin-bottom: 15px;
+    }
+
+    .lead {
+      color: #333;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+    }
+
+    .text-light {
+      font-size: 1rem;
+      font-style: italic;
+      color: #fff;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+    }
+
+    label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .file-wrapper {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+    }
+
+    .submit-btn {
+      margin-top: 25px;
+      padding: 12px 35px;
+      font-size: 1rem;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    }
+
+    .alert-box {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #721c24;
+      background-color: #f8d7da;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-box" id="uploadBox">
+    <h1>Log Analyzer</h1>
+    <p class="lead">by Nilkrishna</p>
+    <p class="text-light">Drag & drop a <strong>.log</strong> file here or use the button below.</p>
+
+    <div id="alertBox" class="alert-box"></div>
+
+    <form id="uploadForm" action="/" method="POST" enctype="multipart/form-data">
+      <div class="file-wrapper">
+        <label for="logfile" style="color: #000;">Choose Log File</label><br/>
+        <input type="file" id="logfile" name="logfile" required />
+      </div>
+      <button type="submit" class="submit-btn">Upload</button>
+    </form>
+  </div>
+
+  <script>
+    const uploadBox = document.getElementById("uploadBox");
+    const fileInput = document.getElementById("logfile");
+    const alertBox = document.getElementById("alertBox");
+
+    // Animate upload box on page load
+    window.onload = () => uploadBox.classList.add("visible");
+
+    // Drag and drop functionality
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadBox.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadBox.classList.add('highlight');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadBox.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadBox.classList.remove('highlight');
+      }, false);
+    });
+
+    uploadBox.addEventListener('drop', e => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+      }
+    });
+
+    // File type validation
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+      const fileName = fileInput.value.toLowerCase();
+      if (!fileName.endsWith(".log")) {
+        event.preventDefault();
+        alertBox.textContent = "Please upload a valid .log file.";
+        alertBox.style.display = "block";
+      } else {
+        alertBox.style.display = "none";
+      }
+    });
+
+    // Notify server before leaving
+    window.addEventListener("beforeunload", function () {
+      navigator.sendBeacon("/exit");
+    });
+  </script>
+</body>
+</html>
